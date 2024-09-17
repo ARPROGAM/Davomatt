@@ -1,0 +1,46 @@
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <input type="file" id="fileInput" />
+  <div id="tableContainer"></div>
+
+  <button onclick="downloadExcel()">Download Excel</button>
+  <button onclick="downloadPDF()">Download PDF</button>
+  <button onclick="downloadWord()">Download Word</button>
+
+  <script>
+    let workbook;
+    
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        workbook = XLSX.read(data, { type: 'array' });
+        const html = XLSX.utils.sheet_to_html(workbook.Sheets[workbook.SheetNames[0]]);
+        document.getElementById('tableContainer').innerHTML = html;
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    function downloadExcel() {
+      XLSX.writeFile(workbook, 'Edited_File.xlsx');
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      pdf.text('Your Edited Table', 10, 10);
+      pdf.save('Edited_File.pdf');
+    }
+
+    function downloadWord() {
+      // Convert and download as Word file (using js-doxc or similar library)
+      // Implement conversion from the sheet content to Word format
+    }
+  </script>
+</body>
+</html>
